@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">{{ video.title }}</h4>
+                </div>
+                <div class="card-body">
+                    <!-- 視頻嵌入 -->
+                    <div class="video-container ratio ratio-16x9 mb-4">
+                        {% if video.get_embed_url %}
+                            <iframe src="{{ video.get_embed_url }}" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                            </iframe>
+                        {% endif %}
+                    </div>
+
+                    <!-- 視頻信息 -->
+                    <div class="video-info">
+                        <h5>視頻描述</h5>
+                        <p class="text-muted">{{ video.description|linebreaks }}</p>
+                        
+                        <div class="meta-info">
+                            <p><strong>上傳者：</strong> {{ video.uploader.username }}</p>
+                            <p><strong>上傳時間：</strong> {{ video.created_at|date:"Y/m/d H:i" }}</p>
+                            <p><strong>觀看次數：</strong> {{ video.views }}</p>
+                            <p><strong>科目：</strong> {{ video.subject }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 相關視頻 -->
+            {% if related_videos %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">相關視頻</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for related_video in related_videos %}
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'video_detail' related_video.pk %}" class="text-decoration-none">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ related_video.title }}</h6>
+                                            <p class="card-text small text-muted">
+                                                觀看次數：{{ related_video.views }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 比例 */
+    height: 0;
+    overflow: hidden;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.meta-info p {
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}

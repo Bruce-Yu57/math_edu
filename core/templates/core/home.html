@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <!-- 歡迎區塊 -->
+    <div class="jumbotron bg-light p-5 rounded mb-4">
+        <h1 class="display-4">歡迎來到國中數學教學資源平台</h1>
+        <p class="lead">這裡提供豐富的教學資源、影片教學和練習題，幫助教師教學和學生學習。</p>
+        {% if not user.is_authenticated %}
+            <hr class="my-4">
+            <p>立即加入我們的平台，開始您的學習之旅！</p>
+            <a class="btn btn-primary btn-lg" href="{% url 'register' %}" role="button">註冊帳號</a>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <!-- 最新教學資源 -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">最新教學資源</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for resource in recent_resources %}
+                            <li class="list-group-item">
+                                <a href="{% url 'resource_detail' resource.pk %}" class="text-decoration-none">
+                                    {{ resource.title }}
+                                </a>
+                                <small class="text-muted d-block">{{ resource.created_at|date:"Y/m/d" }}</small>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">暫無教學資源</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'resource_list' %}" class="btn btn-outline-primary btn-sm">查看更多</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 熱門教學影片 -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">熱門教學影片</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for video in popular_videos %}
+                            <li class="list-group-item">
+                                <a href="{% url 'video_detail' video.pk %}" class="text-decoration-none">
+                                    {{ video.title }}
+                                </a>
+                                <small class="text-muted d-block">觀看次數：{{ video.views }}</small>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">暫無教學影片</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'video_list' %}" class="btn btn-outline-success btn-sm">查看更多</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 最新討論 -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">最新討論</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for post in recent_posts %}
+                            <li class="list-group-item">
+                                <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none">
+                                    {{ post.title }}
+                                </a>
+                                <small class="text-muted d-block">{{ post.created_at|date:"Y/m/d" }}</small>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">暫無討論</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'forum' %}" class="btn btn-outline-info btn-sm">查看更多</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 科目導航 -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="card-title mb-0">按年級和科目瀏覽</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for subject in subjects %}
+                            <div class="col-md-4 mb-3">
+                                <div class="d-grid">
+                                    <a href="{% url 'resource_list' %}?subject={{ subject.id }}" 
+                                       class="btn btn-outline-dark">
+                                        {{ subject.grade }}年級 - {{ subject.name }}
+                                    </a>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="col-12">
+                                <p class="text-center">暫無科目資料</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

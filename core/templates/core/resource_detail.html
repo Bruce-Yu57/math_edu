@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">{{ resource.title }}</h4>
+                </div>
+                <div class="card-body">
+                    <!-- 資源內容 -->
+                    <div class="resource-content mb-4">
+                        {% if resource.file %}
+                            <div class="mb-3">
+                                <a href="{{ resource.file.url }}" class="btn btn-primary" target="_blank">
+                                    <i class="fas fa-download"></i> 下載資源
+                                </a>
+                            </div>
+                        {% endif %}
+
+                        <div class="description">
+                            <h5>資源描述</h5>
+                            <p class="text-muted">{{ resource.description|linebreaks }}</p>
+                        </div>
+
+                        {% if resource.content %}
+                            <div class="content mt-4">
+                                <h5>詳細內容</h5>
+                                <div class="content-text">
+                                    {{ resource.content|safe }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 資源信息 -->
+                    <div class="resource-info">
+                        <hr>
+                        <div class="meta-info">
+                            <p><strong>上傳者：</strong> {{ resource.uploader.username }}</p>
+                            <p><strong>上傳時間：</strong> {{ resource.created_at|date:"Y/m/d H:i" }}</p>
+                            <p><strong>最後更新：</strong> {{ resource.updated_at|date:"Y/m/d H:i" }}</p>
+                            <p><strong>科目：</strong> {{ resource.subject }}</p>
+                            <p><strong>下載次數：</strong> {{ resource.downloads }}</p>
+                            {% if resource.tags.all %}
+                                <p>
+                                    <strong>標籤：</strong>
+                                    {% for tag in resource.tags.all %}
+                                        <span class="badge bg-secondary">{{ tag.name }}</span>
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 相關資源 -->
+            {% if related_resources %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">相關資源</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for related_resource in related_resources %}
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'resource_detail' related_resource.pk %}" class="text-decoration-none">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ related_resource.title }}</h6>
+                                            <p class="card-text small text-muted">
+                                                下載次數：{{ related_resource.downloads }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.meta-info p {
+    margin-bottom: 0.5rem;
+}
+
+.content-text {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
+.badge {
+    margin-right: 0.25rem;
+}
+</style>
+{% endblock %}
